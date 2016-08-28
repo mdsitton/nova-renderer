@@ -4,12 +4,12 @@
  */
 
 #include "config.h"
-#include <easylogging++.h>
 
 #include "utils/utils.h"
 
 config::config(std::string filename) {
-    LOG(INFO) << "Loading config from " << filename;
+    logger = spdlog::get("nova");
+    logger->info("Loading config from {}", filename);
 
     std::ifstream config_file(filename);
     if(config_file.is_open()) {

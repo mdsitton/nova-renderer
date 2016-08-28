@@ -8,6 +8,8 @@
 #include <memory>
 #include <pthread.h>    // I'd love to use <thread>, but apparently my compiler doesn't support it. Just a few more days until Linux...
 
+#include <spdlog/spdlog.h>
+
 #include "interfaces/iwindow.h"
 #include "mc/mc_objects.h"
 
@@ -17,7 +19,7 @@
 #include "config/config.h"
 #include "shaderpack_loading/shaderpack.h"
 #include "uniform_buffer_store.h"
-#include "../gl/windowing/glfw_gl_window.h"
+#include "gl/windowing/glfw_gl_window.h"
 
 /*!
  * \brief Initializes everything this mod needs, creating its own window
@@ -106,6 +108,7 @@ public:
 
 private:
     static pthread_t render_thread;
+    static std::shared_ptr<spdlog::logger> logger;
 
     glfw_gl_window game_window;
     texture_manager tex_manager;
@@ -116,6 +119,7 @@ private:
     gui_renderer gui_renderer_instance;
 
     config nova_config;
+
 
     void enable_debug();
 };

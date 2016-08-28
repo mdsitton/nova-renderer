@@ -8,8 +8,10 @@
 
 #include <string>
 #include <unordered_map>
-#include <core/uniform_buffer_store.h>
 
+#include <spdlog/spdlog.h>
+
+#include <core/uniform_buffer_store.h>
 #include "gl/objects/gl_shader_program.h"
 #include "config/config.h"
 
@@ -40,6 +42,8 @@ private:
     std::unordered_map<std::string, gl_shader_program> shaders;
 
     std::string name;
+
+    std::shared_ptr<spdlog::logger> logger;
 
     void load_zip_shaderpack(std::string shaderpack_name);
 

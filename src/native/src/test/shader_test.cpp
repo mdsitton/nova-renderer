@@ -9,8 +9,10 @@
 #include "test_utils.h"
 #include "gl/objects/gl_shader_program.h"
 #include "core/nova_renderer.h"
-#include <easylogging++.h>
+#include <spdlog/spdlog.h>
 #include <assert.h>
+
+static std::shared_ptr<spdlog::logger> logger;
 
 /*!
  * \brief Tests that the gl_shader_program constructor does not explode
@@ -35,7 +37,7 @@ static void test_add_fragment_shader() {
     // Check that we actually added the shader
     std::vector<GLuint> & shaders = test_shader.get_added_shaders();
     assert(shaders.size() == 1);
-    LOG(INFO) << "We have the right number of shaders";
+    logger->info("We have the right number of shaders");
 }
 
 /*!
@@ -53,7 +55,7 @@ static void test_add_vertex_shader() {
     // Check that we actually added the shader
     std::vector<GLuint> & shaders = test_shader.get_added_shaders();
     assert(shaders.size() == 1);
-    LOG(INFO) << "We have the right number of shaders";
+    logger->info("We have the right number of shaders");
 }
 
 static void test_link_shader() {
@@ -81,17 +83,18 @@ static void test_parse_uniforms() {
     std::vector<std::string> & uniforms = test_shader.get_uniform_names();
 
     assert(uniforms.size() == 4);
-    LOG(INFO) << "We have the right number of uniforms";
+    logger->info("We have the right number of uniforms");
 
     assert(std::find(uniforms.begin(), uniforms.end(), "gbufferModelviewInverse") != uniforms.end());
     assert(std::find(uniforms.begin(), uniforms.end(), "gbufferProjectionInverse") != uniforms.end());
     assert(std::find(uniforms.begin(), uniforms.end(), "sunPosition") != uniforms.end());
     assert(std::find(uniforms.begin(), uniforms.end(), "worldTime") != uniforms.end());
 
-    LOG(INFO) << "We have all the uniforms we should";
+    logger->info("We have all the uniforms we should");
 }
 
 void shader::run_all() {
+    logger = spdlog::get("nova");
     run_test(test_create_shader, "test_create_shader");
     run_test(test_add_fragment_shader, "test_add_fragment_shader");
     run_test(test_add_vertex_shader, "test_add_vertex_shader");

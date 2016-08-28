@@ -6,9 +6,11 @@
 #define RENDERER_TEXTURE_H
 
 
-#include <glad/glad.h>
 #include <exception>
 #include <vector>
+
+#include <glad/glad.h>
+#include <spdlog/spdlog.h>
 
 /*!
  * \brief Encapsulates the parameters for texture filtering
@@ -107,6 +109,7 @@ private:
     GLint format;
     GLuint gl_name;
     GLint current_location = -1;
+    std::shared_ptr<spdlog::logger> logger;
 };
 
 

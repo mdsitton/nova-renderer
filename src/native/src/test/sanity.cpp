@@ -4,7 +4,7 @@
  */
 
 #include <cassert>
-#include <easylogging++.h>
+#include <spdlog/spdlog.h>
 #include "sanity.h"
 #include <glad/glad.h>
 #include "test_utils.h"
@@ -16,7 +16,7 @@ static void sanity::check_gl_version() {
     glGetIntegerv(GL_MAJOR_VERSION, &gl_version_major);
     glGetIntegerv(GL_MINOR_VERSION, &gl_version_minor);
 
-    LOG(INFO) << "Using OpenGL version " << gl_version_major << "." << gl_version_minor;
+    spdlog::get("nova")->info("Using OpenGL version {}.{}", gl_version_major, gl_version_minor);
 
     assert(gl_version_major == 4);
     assert(gl_version_minor == 5);

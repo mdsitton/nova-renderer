@@ -14,7 +14,7 @@
 /*!
  * \brief Initializes the logging system
  */
-void initialize_logging();
+// void initialize_logging();
 
 /*!
  * \brief Splits a string into a vector of strings

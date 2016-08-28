@@ -85,7 +85,7 @@ set(MINIZ_SOURCE "${3RD_PARTY_DIR}/miniz/src/miniz.c"
 include_directories(SYSTEM
         ${GLM_INCLUDE_DIRS}
         ${GLFW3_INCLUDE_DIR}
-        "${3RD_PARTY_DIR}/easyloggingpp/include"
+        "${3RD_PARTY_DIR}/spdlog/include"
         "${3RD_PARTY_DIR}/glad/include"
         "${3RD_PARTY_DIR}/miniz/src"
         "${3RD_PARTY_DIR}/json/src")

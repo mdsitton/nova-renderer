@@ -1,4 +1,4 @@
-#include <easylogging++.h>
+#include <spdlog/spdlog.h>
 
 #include "core/nova.h"
 
@@ -9,15 +9,16 @@ void fill_render_command(mc_render_command &command);
 
 int main() {
     // Open the window first, so we have an OpenGL context to play with
+    std::shared_ptr<spdlog::logger> logger = spdlog::get("nova");
     init_nova();
 
-    LOG(INFO) << "Running sanity tests...";
+    logger->info("Running sanity tests...");
     sanity::run_all();
 
     //LOG(INFO) << "Running shader tests...";
     //shader::run_all();
 
-    LOG(INFO) << "Integration tests...";
+    logger->info("Integration tests...");
 
     // Build a basic GUI thing
     mc_set_gui_screen_command gui_command;

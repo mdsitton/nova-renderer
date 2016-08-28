@@ -13,6 +13,8 @@
 #include <vector>
 
 #include <glad/glad.h>
+#include <spdlog/spdlog.h>
+
 #include "gl_uniform_buffer.h"
 
 class shader_program_already_linked_exception : public std::exception {
@@ -162,6 +164,8 @@ private:
     std::vector<std::string> uniform_names;
     std::vector<std::string> attribute_names;
     std::vector<GLuint> added_shaders;
+    
+    std::shared_ptr<spdlog::logger> logger;
 
     std::string read_shader_file(std::istream & shader_file_stream);
 

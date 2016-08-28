@@ -4,12 +4,9 @@
 
 #include "nova_renderer.h"
 
-#include <easylogging++.h>
-
-INITIALIZE_EASYLOGGINGPP
-
 std::unique_ptr<nova_renderer> nova_renderer::instance;
 pthread_t nova_renderer::render_thread;
+std::shared_ptr<spdlog::logger> nova_renderer::logger;
 
 void * run_render(void * ignored) {
     nova_renderer::instance = std::unique_ptr<nova_renderer>(new nova_renderer());
@@ -61,6 +58,25 @@ bool nova_renderer::should_end() {
 }
 
 void nova_renderer::init_instance() {
+    
+    // We need to init the logger before any other classes init. Which prevents
+    // the nova_renderer constructor from being used.
+    try {
+        std::vector<spdlog::sink_ptr> sinks;
+        sinks.push_back(std::make_shared<spdlog::sinks::stdout_sink_mt>());
+        sinks.push_back(std::make_shared<spdlog::sinks::simple_file_sink_mt>("nova.log"));
+
+        logger = std::make_shared<spdlog::logger>("nova", std::begin(sinks), std::end(sinks));
+        spdlog::register_logger(logger);
+
+        // Maybe we should actually set this with a configuration value?
+        logger->set_level(spdlog::level::trace);
+
+    } catch (const spdlog::spdlog_ex& err) {
+        std::cout << "Logging Failed: " << err.what() << std::endl;
+        return;
+    }
+
     pthread_create(&render_thread, nullptr, run_render, nullptr);
     pthread_join(render_thread, nullptr);
 }
@@ -128,22 +144,23 @@ std::string translate_debug_type(GLenum type) {
 void debug_logger(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const void * user_param) {
     std::string source_name = translate_debug_source(source);
     std::string type_name = translate_debug_type(type);
+    static std::shared_ptr<spdlog::logger> logger = spdlog::get("nova");
 
     switch(severity) {
         case GL_DEBUG_SEVERITY_HIGH:
-            LOG(ERROR) << id << " - Message from " << source_name << " of type " << type_name << ": " << message;
+            logger->error("{} - Message from {} of type {}: {}", id, source_name, type_name, message);
             break;
         case GL_DEBUG_SEVERITY_MEDIUM:
-            LOG(INFO) << id << " - Message from " << source_name << " of type " << type_name << ": " << message;
+            logger->info("{} - Message from {} of type {}: {}", id, source_name, type_name, message);
             break;
         case GL_DEBUG_SEVERITY_LOW:
-            LOG(DEBUG)<< id << " - Message from " << source_name << " of type " << type_name << ": " << message;
+            logger->debug("{} - Message from {} of type {}: {}", id, source_name, type_name, message);
             break;
         case GL_DEBUG_SEVERITY_NOTIFICATION:
-            LOG(TRACE)<< id << " - Message from " << source_name << " of type " << type_name << ": " << message;
+            logger->trace("{} - Message from {} of type {}: {}", id, source_name, type_name, message);
             break;
         default:
-            LOG(INFO) << id << " - Message from " << source_name << " of type " << type_name << ": " << message;
+            logger->info("{} - Message from {} of type {}: {}", id, source_name, type_name, message);
     }
 }
 

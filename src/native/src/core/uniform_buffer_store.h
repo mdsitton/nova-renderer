@@ -8,11 +8,13 @@
 
 #include <string>
 #include <unordered_map>
-#include <json.hpp>
-#include <gl/objects/gl_shader_program.h>
 
-#include "../config/config.h"
-#include "../gl/objects/gl_uniform_buffer.h"
+#include <json.hpp>
+#include <spdlog/spdlog.h>
+
+#include "gl/objects/gl_shader_program.h"
+#include "gl/objects/gl_uniform_buffer.h"
+#include "config/config.h"
 #include "core/shaders/uniform_buffer_definitions.h"
 
 class uniform_buffer_store : public iconfig_listener {
@@ -36,6 +38,8 @@ private:
     std::unordered_map<std::string, gl_uniform_buffer> buffers;
 
     camera_data cam_data;
+    
+    std::shared_ptr<spdlog::logger> logger;
 
     void upload_data();
 

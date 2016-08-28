@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 texture2D::texture2D() {
+    logger = spdlog::get("nova");
     glGenTextures(1, &gl_name);
 }
 

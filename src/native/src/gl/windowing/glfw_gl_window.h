@@ -8,6 +8,8 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <spdlog/spdlog.h>
+
 #include "interfaces/iwindow.h"
 #include "config/config.h"
 
@@ -48,6 +50,7 @@ public:
 private:
     GLFWwindow *window;
     glm::ivec2 window_dimensions;
+    std::shared_ptr<spdlog::logger> logger;
 
     void set_framebuffer_size(glm::ivec2 new_framebuffer_size);
 };

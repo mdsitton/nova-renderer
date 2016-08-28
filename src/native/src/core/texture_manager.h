@@ -7,10 +7,14 @@
 #define RENDERER_TEXTURE_RECEIVER_H
 
 #include <string>
-#include <glm/glm.hpp>
+#include <memory>
 #include <map>
-#include "mc/mc_objects.h"
+
+#include <spdlog/spdlog.h>
+#include <glm/glm.hpp>
 #include <glad/glad.h>
+
+#include "mc/mc_objects.h"
 #include "gl/objects/texture2D.h"
 
 /*!
@@ -144,6 +148,8 @@ private:
     std::map<std::string, texture_location> locations;
 
     int max_texture_size = -1;
+    
+    std::shared_ptr<spdlog::logger> logger;
 };
 
 

@@ -4,10 +4,10 @@
  */
 
 #include <stdexcept>
-#include <easylogging++.h>
 #include "gl_vertex_buffer.h"
 
 gl_vertex_buffer::gl_vertex_buffer() {
+    logger = spdlog::get("nova");
     vertex_array = 0xFFFFFFFF;
     vertex_buffer = 0xFFFFFFFF;
     indices = 0xFFFFFFFF;

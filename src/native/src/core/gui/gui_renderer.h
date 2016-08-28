@@ -8,6 +8,9 @@
 
 #include <memory>
 #include <atomic>
+
+#include <spdlog/spdlog.h>
+
 #include "core/uniform_buffer_store.h"
 #include "interfaces/ivertex_buffer.h"
 #include "mc/mc_gui_objects.h"
@@ -101,6 +104,8 @@ private:
     // Memory that will be accessed from both the render thread and the Java thread
     mc_gui_screen new_screen;
     std::atomic<bool> has_screen_available;
+    
+    std::shared_ptr<spdlog::logger> logger;
 
     /*!
      * \brief Compares two mc_gui_screen objects, determining if they represent the same visual data

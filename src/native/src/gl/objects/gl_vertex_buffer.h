@@ -7,8 +7,10 @@
 #define RENDERER_GL_VERTEX_BUFFER_H
 
 
-#include "interfaces/ivertex_buffer.h"
 #include <glad/glad.h>
+#include <spdlog/spdlog.h>
+ 
+#include "interfaces/ivertex_buffer.h"
 
 /*!
  * \brief Represents a buffer which holds vertex information
@@ -47,6 +49,7 @@ private:
 
     unsigned int vertex_array;
     unsigned int num_indices;
+    std::shared_ptr<spdlog::logger> logger;
 };
 
 

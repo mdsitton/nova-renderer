@@ -3,17 +3,18 @@
  * \date 20-Jun-16.
  */
 
-#include "shaderpack.h"
-#include "gl/objects/gl_shader_program.h"
-
 #include <fstream>
 #include <utility>
-#include <easylogging++.h>
+
+#include "shaderpack.h"
+#include "gl/objects/gl_shader_program.h"
 #include <core/uniform_buffer_store.h>
 
 shaderpack::shaderpack() {
+    logger = spdlog::get("nova");
     default_shader_names.push_back("gui");
-    LOG(INFO) << "Initialized default shaderpack";
+
+    logger->info("Initialized default shaderpack");
 }
 
 void shaderpack::load_shaderpack(const std::string &shaderpack_name) {
@@ -39,7 +40,7 @@ void shaderpack::load_folder_shaderpack(std::string shaderpack_name) {
 
     const std::string shaders_base_dir = "shaderpacks/" + shaderpack_name + "/" + SHADERPACK_FOLDER_NAME + "/";
 
-    LOG(INFO) << "Loading shaders from folder " << shaders_base_dir;
+    logger->info("Loading shaders from folder {}", shaders_base_dir);
 
     for(const std::string & shader_name : default_shader_names) {
         load_program(shaders_base_dir, shader_name);
@@ -83,7 +84,7 @@ void shaderpack::load_shader(const std::string &shader_name,
             }
             break;
         default:
-            LOG(ERROR) << "Unsupported shader type";
+            logger->error("Unsupported shader type");
     }
 }
 
@@ -92,14 +93,14 @@ bool shaderpack::try_loading_shader(const std::string &shader_name, gl_shader_pr
     const std::string full_file_name = shader_name + extension;
     std::ifstream shader_file(full_file_name);
 
-    LOG(INFO) << "Trying to load shader " << full_file_name;
+    logger->info("Trying to load shader {}", full_file_name);
 
     if(shader_file.is_open()) {
         program.add_shader(shader_type, shader_file);
 
         shader_file.close();
 
-        LOG(INFO) << "Success!";
+        logger->info("Success!");
         return true;
     }
 
@@ -109,7 +110,7 @@ bool shaderpack::try_loading_shader(const std::string &shader_name, gl_shader_pr
 void shaderpack::on_config_change(nlohmann::json &new_config) {
     std::string new_shaderpack_name = new_config["loadedShaderpack"];
     if(new_shaderpack_name != name) {
-        LOG(INFO) << "Switched to shaderpack " << new_shaderpack_name;
+        logger->info("Switched to shaderpack {}", new_shaderpack_name);
         load_shaderpack(new_shaderpack_name);
     }
 }

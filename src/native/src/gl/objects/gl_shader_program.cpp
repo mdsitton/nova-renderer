@@ -3,17 +3,18 @@
  * \date 17-May-16.
  */
 
-#include <easylogging++.h>
 #include "gl_shader_program.h"
 
 gl_shader_program::gl_shader_program(std::string name) : linked(false) {
     this->name = name;
+    logger = spdlog::get("nova");
 }
 
 gl_shader_program::gl_shader_program(gl_shader_program && other) :
         uniform_locations(std::move(other.uniform_locations)),
         attribute_locations(std::move(other.attribute_locations)),
         name(std::move(other.name)) {
+    logger = spdlog::get("nova");
     if(!other.linked) {
         throw shader_program_not_linked_exception("Trying to move shader program " + other.name + " but it isn't finished building yet");
     }
@@ -56,7 +57,7 @@ void gl_shader_program::link() {
     linked = true;
 
     gl_name = glCreateProgram();
-    LOG(INFO) << "Created shader program " << gl_name;
+    logger->info("Created shader program {}", gl_name);
 
     for(GLuint shader : added_shaders) {
         glAttachShader(gl_name, shader);
@@ -69,7 +70,7 @@ void gl_shader_program::link() {
         throw program_linking_failure_exception();
     }
 
-    LOG(INFO) << "Program " << gl_name << " linked successfully";
+    logger->info("Program {} linked successfully", gl_name);
 
     for(GLuint shader : added_shaders) {
         // Clean up our resources. I'm told that this is a good thing.
@@ -108,14 +109,14 @@ std::string gl_shader_program::read_shader_file(std::istream & shader_file_strea
 
                 var_name = buf.substr(start_pos, end_pos - start_pos);
 
-                LOG(TRACE) << "Found uniform '" << var_type << "' '" << var_name << "'";
+                logger->trace("Found uniform '{}' '{}'", var_type, var_name);
 
                 uniform_names.push_back(var_name);
             }
         }
         return accum;
     } else {
-        LOG(ERROR) << "I was told to load a shader from a bad stream. Have fun debugging this!";
+        logger->error("I was told to load a shader from a bad stream. Have fun debugging this!");
     }
 }
 
@@ -132,7 +133,7 @@ bool gl_shader_program::check_for_shader_errors(GLuint shader_to_check) {
         glGetShaderInfoLog(shader_to_check, log_size, &log_size, &error_log[0]);
 
         if(log_size > 0) {
-            LOG(ERROR) << "Error compiling shader: \n" << &error_log[0];
+            logger->error("Error compiling shader: \n {}", &error_log[0]);
         }
 
         glDeleteShader(shader_to_check);
@@ -148,7 +149,7 @@ void gl_shader_program::set_uniform_locations() {
         int location = glGetUniformLocation(gl_name, name.c_str());
         uniform_locations.emplace(name, location);
 
-        LOG(TRACE) << "Set location of variable " << name << " to " << location;
+        logger->trace("Set location of variable {} to {}", name, location);
     }
 }
 
@@ -164,7 +165,7 @@ bool gl_shader_program::check_for_linking_errors() {
         glGetProgramInfoLog(gl_name, log_length, &log_length, info_log);
 
         if(log_length > 0) {
-            LOG(ERROR) << "Error linking program " << gl_name << ":\n" << info_log;
+            logger->error("Error linking program {}:\n{}", gl_name, info_log);
         }
 
         return true;
@@ -179,17 +180,17 @@ void gl_shader_program::bind() noexcept {
 }
 
 int gl_shader_program::get_uniform_location(std::string &uniform_name) const noexcept {
-    LOG(INFO) << "Geting uniform location for uniform " << uniform_name;
+    logger->info("Getting uniform location for uniform {}", uniform_name);
     return 0;
 }
 
 int gl_shader_program::get_attribute_location(std::string &attribute_name) const noexcept {
-    LOG(INFO) << "Getting attribute location for attribute " << attribute_name;
+    logger->info("Getting attribute location for attribute {}", attribute_name);
     return 0;
 }
 
 void gl_shader_program::set_uniform_data(GLuint location, int data) noexcept {
-    LOG(INFO) << "Setting uniform data for uniform at location " << location << " to " << data;
+    logger->info("Setting uniform data for uniform at location {} to {}", location, data);
 }
 
 std::vector<GLuint> &gl_shader_program::get_added_shaders() {
@@ -202,7 +203,7 @@ std::vector<std::string> &gl_shader_program::get_uniform_names() {
 
 gl_shader_program::~gl_shader_program() {
     if(linked) {
-        LOG(INFO) << "Deleting program " << gl_name;
+        logger->info("Deleting program", gl_name);
         glDeleteProgram(gl_name);
     } else {
         for(GLuint shader : added_shaders) {
@@ -214,10 +215,10 @@ gl_shader_program::~gl_shader_program() {
 void gl_shader_program::link_to_uniform_buffer(const gl_uniform_buffer &buffer) noexcept {
     GLuint buffer_index = glGetUniformBlockIndex(gl_name, buffer.get_name().c_str());
     if(buffer_index == GL_INVALID_INDEX) {
-        LOG(ERROR) << buffer.get_name() << " is not a valid identifier for program " << gl_name;
+        logger->error("{} is not a valid identifier for program {}", buffer.get_name(), gl_name);
         // return;
     }
-    LOG(TRACE) << "Shader: " << gl_name << " index: " << buffer_index << " bind point " << buffer.get_bind_point();
+    logger->trace("Shader: {} index: {} bind point: {}", gl_name, buffer_index, buffer.get_bind_point());
     glUniformBlockBinding(gl_name, buffer_index, buffer.get_bind_point());
 }
 

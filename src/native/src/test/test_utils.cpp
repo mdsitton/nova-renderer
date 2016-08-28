@@ -3,15 +3,18 @@
  * \date 17-May-16.
  */
 
-#include <easylogging++.h>
+#include <spdlog/spdlog.h>
 
 #include "test_utils.h"
 
+ static std::shared_ptr<spdlog::logger> logger;
+
 void run_test(test_func test_function, std::string name) {
-    LOG(INFO) << "Starting test " << name;
+	logger = spdlog::get("nova");
+	logger->info("Starting test {}", name);
     try {
         test_function();
     } catch(std::exception & e) {
-        LOG(ERROR) << "Exception with message " << e.what();
+    	logger->error("Exception with message {}", e.what());
     }
 }

@@ -6,6 +6,7 @@
 #include "gl_uniform_buffer.h"
 
 gl_uniform_buffer::gl_uniform_buffer(GLuint size) {
+    logger = spdlog::get("nova");
     glGenBuffers(1, &gl_name);
     bind();
     glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_DYNAMIC_DRAW);
@@ -19,17 +20,17 @@ gl_uniform_buffer::gl_uniform_buffer(gl_uniform_buffer &&old) noexcept {
 }
 
 gl_uniform_buffer::~gl_uniform_buffer() {
-    LOG(TRACE) << "Deleting buffer " << gl_name;
+    logger->trace("Deleting buffer {}", gl_name);
     glDeleteBuffers(1, &gl_name);
 }
 
 void gl_uniform_buffer::bind() {
-    LOG(TRACE) << "Binding buffer " << gl_name;
+    logger->trace("Binding buffer {}", gl_name);
     glBindBuffer(GL_UNIFORM_BUFFER, gl_name);
 }
 
 void gl_uniform_buffer::set_bind_point(GLuint bind_point) {
-    LOG(TRACE) << "Setting buffer " << gl_name << " to bind point " << bind_point;
+    logger->trace("Setting buffer {} to bind point {}", gl_name, bind_point);
     glBindBufferBase(GL_UNIFORM_BUFFER, bind_point, gl_name);
     this->bind_point = bind_point;
 }

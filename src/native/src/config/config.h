@@ -8,7 +8,10 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
+
 #include <json.hpp>
+#include <spdlog/spdlog.h>
 
 class config;
 
@@ -85,6 +88,7 @@ public:
 private:
     nlohmann::json options;
     std::vector<iconfig_listener*> config_change_listeners;
+    std::shared_ptr<spdlog::logger> logger;
 };
 
 #endif //RENDERER_CONFIG_H

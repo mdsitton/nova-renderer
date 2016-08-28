@@ -3,22 +3,25 @@
  * \date 18-May-16.
  */
 
-#include <easylogging++.h>
+#include <vector>
+#include <string>
+#include <sstream>
+// #include <easylogging++.h>
 
-void initialize_logging() {
-    // Configure the logger
-    el::Configurations conf("config/logging.conf");
+// void initialize_logging() {
+//     // Configure the logger
+//     el::Configurations conf("config/logging.conf");
 
-    // Turn debug and trace off in release builds
-#ifdef NDEBUG
-    conf.parseFromText("*DEBUG:\n ENABLED=false");
-    conf.parseFromText("*TRACE:\n ENABLED=false");
-#else
-    conf.parseFromText("*ALL: FORMAT = \"%datetime{%h:%m:%s} [%level] at %loc - %msg\"");
-#endif
+//     // Turn debug and trace off in release builds
+// #ifdef NDEBUG
+//     conf.parseFromText("*DEBUG:\n ENABLED=false");
+//     conf.parseFromText("*TRACE:\n ENABLED=false");
+// #else
+//     conf.parseFromText("*ALL: FORMAT = \"%datetime{%h:%m:%s} [%level] at %loc - %msg\"");
+// #endif
 
-    el::Loggers::reconfigureAllLoggers(conf);
-}
+//     el::Loggers::reconfigureAllLoggers(conf);
+// }
 
 std::vector<std::string> split_string(const std::string &s, char delim = ' ') {
     std::vector<std::string> elems;

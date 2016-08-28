@@ -3,15 +3,15 @@
  * \date 05-Jul-16.
  */
 
-#include <core/shaders/uniform_buffer_definitions.h>
 #include <fstream>
-#include <easylogging++.h>
+
 #include "uniform_buffer_store.h"
+#include <core/shaders/uniform_buffer_definitions.h>
 
 uniform_buffer_store::uniform_buffer_store() {
+    logger = spdlog::get("nova");
     create_ubos();
-
-    LOG(INFO) << "Initialized uniform buffer store";
+    logger->info("Initialized uniform buffer store");
 }
 
 void uniform_buffer_store::create_ubos() {
@@ -19,9 +19,10 @@ void uniform_buffer_store::create_ubos() {
 }
 
 void uniform_buffer_store::set_bind_points(nlohmann::json& config) {
+    logger->info << "Provided configuration: " << config;
+
     nlohmann::json& ubo_bind_points_node = config["readOnly"]["uboBindPoints"];
 
-    LOG(INFO) << "Provided configuration: " << config;
 
     for(auto & pair : buffers) {
         unsigned int bind_point = ubo_bind_points_node[pair.first];

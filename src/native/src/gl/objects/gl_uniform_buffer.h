@@ -7,7 +7,7 @@
 #define RENDERER_GL_UNIFORM_BUFFER_H
 
 #include <glad/glad.h>
-#include <easylogging++.h>
+#include <spdlog/spdlog.h>
 #include <pthread.h>
 
 /*!
@@ -82,6 +82,7 @@ private:
     GLuint gl_name;
     GLuint bind_point;
     std::string name;
+    std::shared_ptr<spdlog::logger> logger;
 };
 
 #endif //RENDERER_GL_UNIFORM_BUFFER_H
